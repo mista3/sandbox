@@ -6,7 +6,7 @@ class Rope {
 				
 				addBall(ball) {
 								if (this.balls.length > 0) {
-												this.springs.push(new Spring(this.balls.at(-1), ball, 10))
+												this.springs.push(new Spring(this.balls.at(-1), ball, 10));
 								}
 								this.balls.push(ball);
 				}

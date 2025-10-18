@@ -19,7 +19,12 @@ for (let i = 0; i < 20; i++) {
     rope.addBall(ball);
 }
 
-balls.push(new Ball(300, 100, 8));
+balls.push(new Ball(200, 100, 8));
+
+const fabric = new Fabric(300, 100, 10, 10, balls);
+
+fabric.balls[0].fix();
+fabric.balls[9].fix();
 
 let lastFrameTime = Date.now();
 const loop = () => {
@@ -36,12 +41,14 @@ const loop = () => {
     }
     
     rope.solve();
+    fabric.solve();
     
     for (let ball of balls) {
         ball.draw();
     }
     
     rope.draw();
+    fabric.draw();
     
     setTimeout(loop, 16.6);
 }
@@ -49,7 +56,7 @@ loop();
 
 
 
-balls[0].fix();
+rope.balls[0].fix();
 
 const lastBall = rope.balls.at(-1);
 
