@@ -1,18 +1,21 @@
 class Ball {
-    constructor(x, y, radius, mass = 1, bounciness = .8) {
+    constructor(x, y, radius, mass = 1, bounciness = .6, fixed = false) {
         this.pos = new Vec(x, y);
         this.lastPos = new Vec(x, y);
         this.radius = radius;
         this.mass = mass;
         this.bounciness = bounciness;
         this.force = new Vec();
+        this.fixed = fixed;
     }
     
     applyForce(vec) {
+        if (this.fixed) return;
         this.force.add(vec);
     }
     
     update(delta) {
+        if (this.fixed) return;
         let velX = this.pos.x - this.lastPos.x;
         let velY = this.pos.y - this.lastPos.y;
         
@@ -49,5 +52,13 @@ class Ball {
         ctx.beginPath();
         ctx.arc(this.pos.x, this.pos.y, this.radius, 0, TWO_PI);
         ctx.fill();
+    }
+    
+    fix() {
+        this.fixed = true;
+    }
+    
+    unfix() {
+        this.fixed = false;
     }
 }
