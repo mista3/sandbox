@@ -11,20 +11,15 @@ window.addEventListener('resize', () => {
 const gravity = new Vec(0, 9.8);
 
 const balls = [];
-const rope = [];
+const rope = new Rope();
 
 for (let i = 0; i < 20; i++) {
     const ball = new Ball(10 + 10 * i, 100, 2);
     balls.push(ball);
-    rope.push(ball);
+    rope.addBall(ball);
 }
 
 balls.push(new Ball(300, 100, 8));
-
-const springs = [];
-for (let i = 1; i < rope.length; i++) {
-    springs.push(new Spring(rope[i - 1], rope[i], 10));
-}
 
 let lastFrameTime = Date.now();
 const loop = () => {
@@ -40,33 +35,13 @@ const loop = () => {
         ball.update(delta);
     }
     
-    for (let spring of springs) {
-        spring.solve();
-    }
+    rope.solve();
     
     for (let ball of balls) {
         ball.draw();
     }
     
-    ctx.beginPath();
-    ctx.moveTo(rope[0].pos.x, rope[0].pos.y);
-    
-    for (let i = 1; i < rope.length; i++) {
-        const ball = rope[i];
-        const prevBall = rope[i - 1];
-        ctx.bezierCurveTo(
-        				prevBall.pos.x, 
-        				prevBall.pos.y, 
-        				ball.pos.x, 
-        				ball.pos.y, 
-        				ball.pos.x + (prevBall.pos.x - ball.pos.x) * .5, 
-        				ball.pos.y + (prevBall.pos.y - ball.pos.y) * .5,
-        );
-    }
-    
-    ctx.strokeStyle = 'black';
-    ctx.lineWidth = 4;
-    ctx.stroke();
+    rope.draw();
     
     setTimeout(loop, 16.6);
 }
@@ -76,7 +51,7 @@ loop();
 
 balls[0].fix();
 
-const lastBall = rope.at(-1);
+const lastBall = rope.balls.at(-1);
 
 window.addEventListener('touchstart', (ev) => {
     lastBall.fix();
