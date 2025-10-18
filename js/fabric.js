@@ -4,7 +4,7 @@ class Fabric {
 								this.springs = [];
 								for (let j = 0; j < height; j++) {
 												for (let i = 0; i < width; i++) {	
-																const ball = new Ball(x + restDist * i, y + restDist, 2);
+																const ball = new Ball(x + restDist * i, y + restDist * j, 2);
 																this.balls.push(ball);
 																globalBalls.push(ball);
 																if (i > 0) {
