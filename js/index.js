@@ -23,9 +23,6 @@ balls.push(new Ball(200, 100, 8));
 
 const fabric = new Fabric(300, 100, 10, 10, balls);
 
-fabric.balls[0].fix();
-fabric.balls[9].fix();
-
 let lastFrameTime = Date.now();
 const loop = () => {
     const now = Date.now();
@@ -58,22 +55,49 @@ loop();
 
 rope.balls[0].fix();
 
-const lastBall = rope.balls.at(-1);
+fabric.balls[0].fix();
+fabric.balls[9].fix();
+
+let heldBall = null;
+let keepFixed = false;
 
 window.addEventListener('touchstart', (ev) => {
-    lastBall.fix();
+    if (heldBall) {
+        heldBall.fixed = !keepFixed;
+        keepFixed = !keepFixed;
+        return;
+    }
+    const touch = ev.touches[0];
+    let minDist = 50;
+    let closest = null;
+    for (let ball of balls) {
+        const dist = Math.abs(ball.pos.x - touch.pageX) + Math.abs(ball.pos.y - touch.pageY);
+        if (dist < minDist) {
+            minDist = dist;
+            closest = ball;
+        }
+    }
+    if (closest) {
+        heldBall = closest;
+        if (heldBall.fixed) keepFixed = true;
+        else heldBall.fix();
+    }
 })
 
 window.addEventListener('touchmove', (ev) => {
+    if (!heldBall) return;
     const touch = ev.touches[0];
     
-    lastBall.lastPos.x = lastBall.pos.x;
-    lastBall.lastPos.y = lastBall.pos.y;
+    heldBall.lastPos.x = heldBall.pos.x;
+    heldBall.lastPos.y = heldBall.pos.y;
     
-    lastBall.pos.x = touch.pageX;
-    lastBall.pos.y = touch.pageY;
+    heldBall.pos.x = touch.pageX;
+    heldBall.pos.y = touch.pageY;
 })
 
 window.addEventListener('touchend', (ev) => {
-    lastBall.unfix();
+    if (!heldBall) return;
+    if (keepFixed) keepFixed = false;
+    else heldBall.unfix();
+    heldBall = null
 })
