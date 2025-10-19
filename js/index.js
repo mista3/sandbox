@@ -61,17 +61,16 @@ fabric.balls[9].fix();
 let heldBall = null;
 let keepFixed = false;
 
-window.addEventListener('touchstart', (ev) => {
+const grabStart = (x, y) => {
     if (heldBall) {
         heldBall.fixed = !keepFixed;
         keepFixed = !keepFixed;
         return;
     }
-    const touch = ev.touches[0];
     let minDist = 50;
     let closest = null;
     for (let ball of balls) {
-        const dist = Math.abs(ball.pos.x - touch.pageX) + Math.abs(ball.pos.y - touch.pageY);
+        const dist = Math.abs(ball.pos.x - x) + Math.abs(ball.pos.y - y);
         if (dist < minDist) {
             minDist = dist;
             closest = ball;
@@ -82,22 +81,48 @@ window.addEventListener('touchstart', (ev) => {
         if (heldBall.fixed) keepFixed = true;
         else heldBall.fix();
     }
-})
+}
 
-window.addEventListener('touchmove', (ev) => {
+const grabMove = (x, y) => {
     if (!heldBall) return;
-    const touch = ev.touches[0];
     
     heldBall.lastPos.x = heldBall.pos.x;
     heldBall.lastPos.y = heldBall.pos.y;
     
-    heldBall.pos.x = touch.pageX;
-    heldBall.pos.y = touch.pageY;
-})
+    heldBall.pos.x = x;
+    heldBall.pos.y = y;
+}
 
-window.addEventListener('touchend', (ev) => {
+const grabEnd = () => {
     if (!heldBall) return;
     if (keepFixed) keepFixed = false;
     else heldBall.unfix();
-    heldBall = null
+    heldBall = null;
+}
+
+window.addEventListener('touchstart', (ev) => {
+    const touch = ev.touches[0];
+    grabStart(touch.pageX, touch.pageY);
+})
+
+window.addEventListener('touchmove', (ev) => {
+    const touch = ev.touches[0];
+    grabMove(touch.pageX, touch.pageY);
+})
+
+window.addEventListener('touchend', (ev) => {
+    grabEnd();
+})
+
+window.addEventListener('mousedown', (ev) => {
+    console.log(ev)
+    grabStart(ev.x, ev.y);
+})
+
+window.addEventListener('mousemove', (ev) => {
+    grabMove(ev.x, ev.y);
+})
+
+window.addEventListener('mouseup', (ev) => {
+    grabEnd();
 })
