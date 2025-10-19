@@ -62,11 +62,7 @@ let heldBall = null;
 let keepFixed = false;
 
 const grabStart = (x, y) => {
-    if (heldBall) {
-        heldBall.fixed = !keepFixed;
-        keepFixed = !keepFixed;
-        return;
-    }
+    
     let minDist = 50;
     let closest = null;
     for (let ball of balls) {
@@ -101,6 +97,10 @@ const grabEnd = () => {
 }
 
 window.addEventListener('touchstart', (ev) => {
+    if (heldBall) {
+        keepFixed = !keepFixed;
+        return;
+    }
     const touch = ev.touches[0];
     grabStart(touch.pageX, touch.pageY);
 })
@@ -110,19 +110,18 @@ window.addEventListener('touchmove', (ev) => {
     grabMove(touch.pageX, touch.pageY);
 })
 
-window.addEventListener('touchend', (ev) => {
-    grabEnd();
-})
+window.addEventListener('touchend', grabEnd);
 
 window.addEventListener('mousedown', (ev) => {
     console.log(ev)
-    grabStart(ev.x, ev.y);
+    if (ev.button === 0) grabStart(ev.x, ev.y);
+    else if (heldBall && ev.button === 2) {
+        keepFixed = !keepFixed;
+    }
 })
 
 window.addEventListener('mousemove', (ev) => {
     grabMove(ev.x, ev.y);
 })
 
-window.addEventListener('mouseup', (ev) => {
-    grabEnd();
-})
+window.addEventListener('mouseup', grabEnd);
