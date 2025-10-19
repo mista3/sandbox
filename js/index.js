@@ -11,17 +11,11 @@ window.addEventListener('resize', () => {
 const gravity = new Vec(0, 9.8);
 
 const balls = [];
-const rope = new Rope();
-
-for (let i = 0; i < 20; i++) {
-    const ball = new Ball(10 + 10 * i, 100, 2);
-    balls.push(ball);
-    rope.addBall(ball);
-}
 
 balls.push(new Ball(200, 100, 8));
 
-const fabric = new Fabric(300, 100, 10, 10, balls);
+const rope = new Fabric(10, 100, 1, 20, balls, 10, 4);
+const fabric = new Fabric(210, 100, 20, 20, balls, 10, 1);
 
 let lastFrameTime = Date.now();
 const loop = () => {
@@ -37,8 +31,10 @@ const loop = () => {
         ball.update(delta);
     }
     
-    rope.solve();
-    fabric.solve();
+    for (let i = 0; i < 4; i++) {
+    				rope.solve();
+    				fabric.solve();
+    }
     
     for (let ball of balls) {
         ball.draw();
@@ -56,7 +52,8 @@ loop();
 rope.balls[0].fix();
 
 fabric.balls[0].fix();
-fabric.balls[9].fix();
+//fabric.balls[9].fix();
+fabric.balls[19].fix();
 
 let heldBall = null;
 let keepFixed = false;
@@ -125,3 +122,5 @@ window.addEventListener('mousemove', (ev) => {
 })
 
 window.addEventListener('mouseup', grabEnd);
+
+window.addEventListener('contextmenu', (e) => e.preventDefault());

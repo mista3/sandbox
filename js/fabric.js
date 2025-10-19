@@ -1,10 +1,13 @@
 class Fabric {
-				constructor(x, y, width, height, globalBalls, restDist = 10) {
+				constructor(x, y, width, height, globalBalls, restDist = 10, thickness = 2) {
 								this.balls = [];
 								this.springs = [];
+								this.thickness = thickness;
+								
+								const ballRadius = thickness * .5;
 								for (let j = 0; j < height; j++) {
 												for (let i = 0; i < width; i++) {	
-																const ball = new Ball(x + restDist * i, y + restDist * j, 2);
+																const ball = new Ball(x + restDist * i, y + restDist * j, ballRadius);
 																this.balls.push(ball);
 																globalBalls.push(ball);
 																if (i > 0) {
@@ -27,28 +30,31 @@ class Fabric {
 								}
 				}
 				
+				drawSegment(i, j, prevBall) {
+								const index = getIndexFromCoords(i, j, this.width);
+								const ball = this.balls[index];
+								ctx.bezierCurveTo(
+												prevBall.pos.x,
+												prevBall.pos.y,
+												ball.pos.x,
+												ball.pos.y,
+												ball.pos.x + (prevBall.pos.x - ball.pos.x) * .5,
+												ball.pos.y + (prevBall.pos.y - ball.pos.y) * .5,
+								);
+								return ball;
+				}
+				
 				draw() {
 								for (let i = 0; i < this.width; i++) {
 												ctx.beginPath();
 												const startIndex = getIndexFromCoords(i, 0, this.width);
 												let prevBall = this.balls[startIndex];
 												ctx.moveTo(prevBall.pos.x, prevBall.pos.y);
-												for (let j = 1; j < this.height; j++) {	
-																const index = getIndexFromCoords(i, j, this.width);
-																const ball = this.balls[index];
-								
-																ctx.bezierCurveTo(
-																				prevBall.pos.x,
-																				prevBall.pos.y,
-																				ball.pos.x,
-																				ball.pos.y,
-																				ball.pos.x + (prevBall.pos.x - ball.pos.x) * .5,
-																				ball.pos.y + (prevBall.pos.y - ball.pos.y) * .5,
-																);
-																prevBall = ball;
+												for (let j = 1; j < this.height; j++) {
+																prevBall = this.drawSegment(i, j, prevBall);
 												}
 												ctx.strokeStyle = 'black';
-												ctx.lineWidth = 4;
+												ctx.lineWidth = this.thickness;
 												ctx.stroke();
 								}
 								for (let j = 0; j < this.height; j++) {
@@ -56,22 +62,11 @@ class Fabric {
 												const startIndex = getIndexFromCoords(0, j, this.width);
 												let prevBall = this.balls[startIndex];
 												ctx.moveTo(prevBall.pos.x, prevBall.pos.y);
-												for (let i = 1; i < this.width; i++) {	
-																const index = getIndexFromCoords(i, j, this.width);
-																const ball = this.balls[index];
-								
-																ctx.bezierCurveTo(
-																				prevBall.pos.x,
-																				prevBall.pos.y,
-																				ball.pos.x,
-																				ball.pos.y,
-																				ball.pos.x + (prevBall.pos.x - ball.pos.x) * .5,
-																				ball.pos.y + (prevBall.pos.y - ball.pos.y) * .5,
-																);
-																prevBall = ball;
+												for (let i = 1; i < this.width; i++) {
+																prevBall = this.drawSegment(i, j, prevBall);
 												}
 												ctx.strokeStyle = 'black';
-												ctx.lineWidth = 4;
+												ctx.lineWidth = this.thickness;
 												ctx.stroke();
 								}
 				}
