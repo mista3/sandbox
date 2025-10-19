@@ -1,5 +1,5 @@
 class Ball {
-    constructor(x, y, radius, mass = 1, bounciness = .6, fixed = false) {
+    constructor(x, y, radius, mass = 1, bounciness = .6, fixed = false, invisible = false) {
         this.pos = new Vec(x, y);
         this.lastPos = new Vec(x, y);
         this.radius = radius;
@@ -7,6 +7,7 @@ class Ball {
         this.bounciness = bounciness;
         this.force = new Vec();
         this.fixed = fixed;
+        this.invisible = invisible;
     }
     
     applyForce(vec) {
@@ -48,6 +49,7 @@ class Ball {
     }
     
     draw() {
+        if (this.invisible) return;
         ctx.fillStyle = 'black';
         ctx.beginPath();
         ctx.arc(this.pos.x, this.pos.y, this.radius, 0, TWO_PI);

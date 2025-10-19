@@ -7,7 +7,7 @@ class Fabric {
 								const ballRadius = thickness * .5;
 								for (let j = 0; j < height; j++) {
 												for (let i = 0; i < width; i++) {	
-																const ball = new Ball(x + restDist * i, y + restDist * j, ballRadius);
+																const ball = new Ball(x + restDist * i, y + restDist * j, ballRadius, 1, .6, false, true);
 																this.balls.push(ball);
 																globalBalls.push(ball);
 																if (i > 0) {
@@ -68,6 +68,27 @@ class Fabric {
 												ctx.strokeStyle = 'black';
 												ctx.lineWidth = this.thickness;
 												ctx.stroke();
+								}
+				}
+				
+				draw2() {
+								for (let i = 1; i < this.width; i++) {
+												for (let j = 1; j < this.height; j++) {
+																const ball = this.balls[getIndexFromCoords(i, j, this.width)];
+																const leftBall = this.balls[getIndexFromCoords(i - 1, j, this.width)];
+																const leftUpBall = this.balls[getIndexFromCoords(i - 1, j - 1, this.width)];
+																const upBall = this.balls[getIndexFromCoords(i, j - 1, this.width)];
+																
+																ctx.beginPath();
+																ctx.moveTo(ball.pos.x, ball.pos.y);
+																ctx.lineTo(leftBall.pos.x, leftBall.pos.y);
+																ctx.lineTo(leftUpBall.pos.x, leftUpBall.pos.y);
+																ctx.lineTo(upBall.pos.x, upBall.pos.y);
+																ctx.fillStyle = '#421725e6';
+																ctx.closePath();
+																
+																ctx.fill();
+												}
 								}
 				}
 }

@@ -17,6 +17,19 @@ balls.push(new Ball(200, 100, 8));
 const rope = new Fabric(10, 100, 1, 20, balls, 10, 4);
 const fabric = new Fabric(210, 100, 20, 20, balls, 10, 1);
 
+const anims = [];
+
+for (let i = 0; i < 5; i++) {
+    const index = Math.max(i * 4 - 1, 0);
+    const ball = fabric.balls[index];
+    ball.fix();
+    const anim = new Anim(ball.pos, 'x', 200 - index * 10 - 50 + i * 10, 1);
+    anim.play();
+    anims.push(anim);
+}
+fabric.balls[19].fix();
+
+
 let lastFrameTime = Date.now();
 const loop = () => {
     const now = Date.now();
@@ -25,6 +38,10 @@ const loop = () => {
     
     ctx.fillStyle = 'grey';
     ctx.fillRect(0, 0, width, height);
+    
+    for (let anim of anims) {
+    				anim.step(delta);
+    }
     
     for (let ball of balls) {
         ball.applyForce(gravity);
@@ -41,7 +58,7 @@ const loop = () => {
     }
     
     rope.draw();
-    fabric.draw();
+    fabric.draw2();
     
     setTimeout(loop, 16.6);
 }
@@ -54,6 +71,8 @@ rope.balls[0].fix();
 fabric.balls[0].fix();
 //fabric.balls[9].fix();
 fabric.balls[19].fix();
+
+
 
 let heldBall = null;
 let keepFixed = false;
@@ -110,7 +129,6 @@ window.addEventListener('touchmove', (ev) => {
 window.addEventListener('touchend', grabEnd);
 
 window.addEventListener('mousedown', (ev) => {
-    console.log(ev)
     if (ev.button === 0) grabStart(ev.x, ev.y);
     else if (heldBall && ev.button === 2) {
         keepFixed = !keepFixed;
