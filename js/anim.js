@@ -19,7 +19,7 @@ class Anim {
 								this.obj[this.prop] += change;
 								this.progress += change;
 								const diff = this.goal - this.progress;
-								if (diff <= 0) {
+								if (this.goal > 0 && diff <= 0 || this.goal < 0 && diff >= 0) {
 												this.obj[this.prop] += diff;
 												this.stop();
 								}

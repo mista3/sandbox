@@ -11,23 +11,40 @@ window.addEventListener('resize', () => {
 const gravity = new Vec(0, 9.8);
 
 const balls = [];
+const fabrics = [];
+const anims = [];
 
 balls.push(new Ball(200, 100, 8));
 
-const rope = new Fabric(10, 100, 1, 20, balls, 10, 4);
-const fabric = new Fabric(210, 100, 20, 20, balls, 10, 1);
+const rope = new Fabric(10, 310, 1, 20, balls, 10, 4, true);
+const fabricRight = new Fabric(210, 100, 20, 20, balls, 10, 1, false, '#421725e6');
+const fabricLeft = new Fabric(10, 100, 20, 20, balls, 10, 1, false, '#421725e6');
+const basket = new Fabric(100, 400, 6, 8, balls, 20, 1, true);
 
-const anims = [];
+fabrics.push(rope, fabricRight, fabricLeft, basket);
 
-for (let i = 0; i < 5; i++) {
+for (let i = 5; i > 0; i--) {
     const index = Math.max(i * 4 - 1, 0);
-    const ball = fabric.balls[index];
+    const ball = fabricLeft.balls[index];
     ball.fix();
-    const anim = new Anim(ball.pos, 'x', 200 - index * 10 - 50 + i * 10, 1);
+    const anim = new Anim(ball.pos, 'x', -200 + 50 - (5 - i) * 10 + (19 - index) * 10, 2);
     anim.play();
     anims.push(anim);
 }
-fabric.balls[19].fix();
+fabricLeft.balls[0].fix();
+
+for (let i = 0; i < 5; i++) {
+    const index = Math.max(i * 4 - 1, 0);
+    const ball = fabricRight.balls[index];
+    ball.fix();
+    const anim = new Anim(ball.pos, 'x', 200 - index * 10 - 50 + i * 10, 2);
+    anim.play();
+    anims.push(anim);
+}
+fabricRight.balls[19].fix();
+
+basket.balls[0].fix();
+basket.balls[5].fix();
 
 
 let lastFrameTime = Date.now();
@@ -49,16 +66,18 @@ const loop = () => {
     }
     
     for (let i = 0; i < 4; i++) {
-    				rope.solve();
-    				fabric.solve();
+        for (let fabric of fabrics) {
+            fabric.solve();
+        }
     }
     
     for (let ball of balls) {
         ball.draw();
     }
     
-    rope.draw();
-    fabric.draw2();
+    for (let fabric of fabrics) {
+        fabric.draw();
+    }
     
     setTimeout(loop, 16.6);
 }
@@ -68,17 +87,10 @@ loop();
 
 rope.balls[0].fix();
 
-fabric.balls[0].fix();
-//fabric.balls[9].fix();
-fabric.balls[19].fix();
-
-
-
 let heldBall = null;
 let keepFixed = false;
 
 const grabStart = (x, y) => {
-    
     let minDist = 50;
     let closest = null;
     for (let ball of balls) {

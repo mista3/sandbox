@@ -1,5 +1,5 @@
 class Fabric {
-				constructor(x, y, width, height, globalBalls, restDist = 10, thickness = 2) {
+				constructor(x, y, width, height, globalBalls, restDist = 10, thickness = 2, outlined = false, color = 'black') {
 								this.balls = [];
 								this.springs = [];
 								this.thickness = thickness;
@@ -7,7 +7,7 @@ class Fabric {
 								const ballRadius = thickness * .5;
 								for (let j = 0; j < height; j++) {
 												for (let i = 0; i < width; i++) {	
-																const ball = new Ball(x + restDist * i, y + restDist * j, ballRadius, 1, .6, false, true);
+																const ball = new Ball(x + restDist * i, y + restDist * j, ballRadius, 1, .6, false);
 																this.balls.push(ball);
 																globalBalls.push(ball);
 																if (i > 0) {
@@ -22,6 +22,8 @@ class Fabric {
 								}
 								this.width = width;
 								this.height = height;
+								this.color = color;
+								this.outlined = outlined;
 				}
 				
 				solve() {
@@ -33,18 +35,24 @@ class Fabric {
 				drawSegment(i, j, prevBall) {
 								const index = getIndexFromCoords(i, j, this.width);
 								const ball = this.balls[index];
-								ctx.bezierCurveTo(
-												prevBall.pos.x,
-												prevBall.pos.y,
-												ball.pos.x,
-												ball.pos.y,
-												ball.pos.x + (prevBall.pos.x - ball.pos.x) * .5,
-												ball.pos.y + (prevBall.pos.y - ball.pos.y) * .5,
-								);
+								//ctx.bezierCurveTo(
+												//prevBall.pos.x,
+												//prevBall.pos.y,
+												//ball.pos.x,
+												//ball.pos.y,
+												//ball.pos.x + (prevBall.pos.x - ball.pos.x) * .5,
+												//ball.pos.y + (prevBall.pos.y - ball.pos.y) * .5,
+								//);
+								ctx.lineTo(ball.pos.x, ball.pos.y);
 								return ball;
 				}
 				
 				draw() {
+								if (this.outlined) this.stroke();
+								else this.fill();
+				}
+				
+				stroke() {
 								for (let i = 0; i < this.width; i++) {
 												ctx.beginPath();
 												const startIndex = getIndexFromCoords(i, 0, this.width);
@@ -53,7 +61,7 @@ class Fabric {
 												for (let j = 1; j < this.height; j++) {
 																prevBall = this.drawSegment(i, j, prevBall);
 												}
-												ctx.strokeStyle = 'black';
+												ctx.strokeStyle = this.color;
 												ctx.lineWidth = this.thickness;
 												ctx.stroke();
 								}
@@ -65,13 +73,13 @@ class Fabric {
 												for (let i = 1; i < this.width; i++) {
 																prevBall = this.drawSegment(i, j, prevBall);
 												}
-												ctx.strokeStyle = 'black';
+												ctx.strokeStyle = this.color;
 												ctx.lineWidth = this.thickness;
 												ctx.stroke();
 								}
 				}
 				
-				draw2() {
+				fill() {
 								for (let i = 1; i < this.width; i++) {
 												for (let j = 1; j < this.height; j++) {
 																const ball = this.balls[getIndexFromCoords(i, j, this.width)];
@@ -84,7 +92,7 @@ class Fabric {
 																ctx.lineTo(leftBall.pos.x, leftBall.pos.y);
 																ctx.lineTo(leftUpBall.pos.x, leftUpBall.pos.y);
 																ctx.lineTo(upBall.pos.x, upBall.pos.y);
-																ctx.fillStyle = '#421725e6';
+																ctx.fillStyle = this.color;
 																ctx.closePath();
 																
 																ctx.fill();
