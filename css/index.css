@@ -8,3 +8,11 @@ canvas {
   image-rendering: pixelated;
   display: block;
 }
+
+button {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  top: 400px;
+  left: 350px;
+}

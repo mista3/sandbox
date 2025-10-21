@@ -41,8 +41,8 @@ class Ball {
             velY *= this.bounciness;
         }
         
-        this.pos.x = this.pos.x + velX + accX * delta;
-        this.pos.y = this.pos.y + velY + accY * delta;
+        this.pos.x += velX + accX * delta;
+        this.pos.y += velY + accY * delta;
         
         this.force.x = 0;
         this.force.y = 0;

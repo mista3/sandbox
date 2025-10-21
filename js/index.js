@@ -10,9 +10,12 @@ window.addEventListener('resize', () => {
 
 const gravity = new Vec(0, 9.8);
 
+const button = document.querySelector('button');
+
 const balls = [];
 const fabrics = [];
 const anims = [];
+const curtainAnims = [];
 
 balls.push(new Ball(200, 100, 8));
 
@@ -21,6 +24,7 @@ const fabricRight = new Fabric(210, 100, 20, 20, balls, 10, 1, false, '#421725e6
 const fabricLeft = new Fabric(10, 100, 20, 20, balls, 10, 1, false, '#421725e6');
 const basket = new Fabric(100, 400, 6, 8, balls, 20, 1, true);
 
+rope.balls[0].fix();
 fabrics.push(rope, fabricRight, fabricLeft, basket);
 
 for (let i = 5; i > 0; i--) {
@@ -28,8 +32,8 @@ for (let i = 5; i > 0; i--) {
     const ball = fabricLeft.balls[index];
     ball.fix();
     const anim = new Anim(ball.pos, 'x', -200 + 50 - (5 - i) * 10 + (19 - index) * 10, 2);
-    anim.play();
     anims.push(anim);
+    curtainAnims.push(anim);
 }
 fabricLeft.balls[0].fix();
 
@@ -38,15 +42,15 @@ for (let i = 0; i < 5; i++) {
     const ball = fabricRight.balls[index];
     ball.fix();
     const anim = new Anim(ball.pos, 'x', 200 - index * 10 - 50 + i * 10, 2);
-    anim.play();
     anims.push(anim);
+    curtainAnims.push(anim);
 }
 fabricRight.balls[19].fix();
 
 basket.balls[0].fix();
 basket.balls[5].fix();
 
-
+let loopTimeout;
 let lastFrameTime = Date.now();
 const loop = () => {
     const now = Date.now();
@@ -79,13 +83,9 @@ const loop = () => {
         fabric.draw();
     }
     
-    setTimeout(loop, 16.6);
+    loopTimeout = setTimeout(loop, 16.6);
 }
 loop();
-
-
-
-rope.balls[0].fix();
 
 let heldBall = null;
 let keepFixed = false;
@@ -124,6 +124,12 @@ const grabEnd = () => {
     heldBall = null;
 }
 
+button.onclick = () => {
+    for(let anim of curtainAnims) {
+        anim.play();
+    }
+}
+
 window.addEventListener('touchstart', (ev) => {
     if (heldBall) {
         keepFixed = !keepFixed;
@@ -154,3 +160,12 @@ window.addEventListener('mousemove', (ev) => {
 window.addEventListener('mouseup', grabEnd);
 
 window.addEventListener('contextmenu', (e) => e.preventDefault());
+
+document.addEventListener("visibilitychange", (event) => {
+  if (document.visibilityState == "visible") {
+      lastFrameTime = Date.now();
+      loop();
+  } else {
+      if (loopTimeout) clearTimeout(loopTimeout);
+  }
+});
