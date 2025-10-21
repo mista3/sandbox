@@ -52,6 +52,7 @@ basket.balls[5].fix();
 
 let loopTimeout;
 let lastFrameTime = Date.now();
+
 const loop = () => {
     const now = Date.now();
     const delta = (now - lastFrameTime) * .001;
@@ -85,7 +86,10 @@ const loop = () => {
     
     loopTimeout = setTimeout(loop, 16.6);
 }
-loop();
+
+if(document.visibilityState === "visible") {
+    loop();
+}
 
 let heldBall = null;
 let keepFixed = false;
@@ -164,6 +168,7 @@ window.addEventListener('contextmenu', (e) => e.preventDefault());
 document.addEventListener("visibilitychange", (event) => {
   if (document.visibilityState == "visible") {
       lastFrameTime = Date.now();
+      if (loopTimeout) clearTimeout(loopTimeout);
       loop();
   } else {
       if (loopTimeout) clearTimeout(loopTimeout);

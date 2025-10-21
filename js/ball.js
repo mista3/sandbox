@@ -26,19 +26,23 @@ class Ball {
         let accX = this.force.x / this.mass;
         let accY = this.force.y / this.mass;
         
-        if (this.pos.x - this.radius < 0) {
-            this.pos.x = this.radius;
-            velX *= this.bounciness;
-        } else if (this.pos.x + this.radius > width) {
-            this.pos.x = width - this.radius;
-            velX *= this.bounciness;
+        if (width > 0) {
+            if (this.pos.x - this.radius < 0) {
+                this.pos.x = this.radius;
+                velX *= this.bounciness;
+            } else if (this.pos.x + this.radius > canvas.width) {
+                this.pos.x = canvas.width - this.radius;
+                velX *= this.bounciness;
+            }
         }
-        if (this.pos.y - this.radius < 0) {
-            this.pos.y = this.radius;
-            velY *= this.bounciness;
-        } else if (this.pos.y + this.radius > height) {
-            this.pos.y = height - this.radius;
-            velY *= this.bounciness;
+        if (height > 0) {
+            if (this.pos.y - this.radius < 0) {
+                this.pos.y = this.radius;
+                velY *= this.bounciness;
+            } else if (this.pos.y + this.radius > canvas.height) {
+                this.pos.y = canvas.height - this.radius;
+                velY *= this.bounciness;
+            }
         }
         
         this.pos.x += velX + accX * delta;
