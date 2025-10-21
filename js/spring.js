@@ -1,8 +1,10 @@
 class Spring {
-				constructor(a, b, restDist) {
+				constructor(a, b, restDist, tearDist) {
 								this.a = a;
 								this.b = b;
 								this.restDist = restDist;
+								this.tearDist = tearDist;
+								this.destroyed = false;
 				}
 				
 				solve() {
@@ -11,6 +13,10 @@ class Spring {
 								const diffY = this.a.pos.y - this.b.pos.y;
 								
 								const dist = Math.sqrt(diffX * diffX + diffY * diffY);
+								
+								if (dist > this.tearDist) {
+												return true;
+								}
 								
 								const stretch = (this.restDist - dist) / dist;
 								
