@@ -1,29 +1,60 @@
 class Fabric {
-				constructor(x, y, width, height, globalBalls, restDist = 10, thickness = 2, outlined = false, color = 'black', tearDist = 100) {
+				constructor(x, y, width, height, globalBalls, restDist = 10, thickness = 2, outlined = true, color = 'black', tearDist = 100) {
 								this.balls = [];
 								this.springs = [];
+								this.width = width;
+								this.height = height;
 								this.thickness = thickness;
+								this.outlined = outlined;
+								this.color = color;
 								
 								const ballRadius = thickness * .5;
+								
+								this.springQuadMap = new Map();
+								
+								let ballIndex = 0;
+								
 								for (let j = 0; j < height; j++) {
 												for (let i = 0; i < width; i++) {	
 																const ball = new Ball(x + restDist * i, y + restDist * j, ballRadius, 1, .6, false);
 																this.balls.push(ball);
 																globalBalls.push(ball);
 																if (i > 0) {
-																				const leftIndex = getIndexFromCoords(i - 1, j, width);
-																				this.springs.push(new Spring(this.balls[leftIndex], ball, restDist, tearDist));
+																				const leftBall = this.balls[getIndexFromCoords(i - 1, j, width)];
+																				const spring = new Spring(leftBall, ball, restDist, tearDist);
+																				this.springs.push(spring);
+																				const quads = [];
+																				if (j > 0) quads.push(ballIndex);
+																				if (j < height - 1) quads.push(ballIndex + width);
+																				this.springQuadMap.set(spring, quads);
 																}
 																if (j > 0) {
-																				const upIndex = getIndexFromCoords(i, j - 1, width);
-																				this.springs.push(new Spring(this.balls[upIndex], ball, restDist, tearDist));
+																				const upBall = this.balls[getIndexFromCoords(i, j - 1, width)];
+																				const spring = new Spring(upBall, ball, restDist, tearDist);
+																				this.springs.push(spring);
+																				const quads = [];
+																				if (i > 0) quads.push(ballIndex);
+																				if (i < width - 1) quads.push(ballIndex + 1);
+																				this.springQuadMap.set(spring, quads);
 																}
+																
+																ballIndex++;
 												}
 								}
-								this.width = width;
-								this.height = height;
-								this.color = color;
-								this.outlined = outlined;
+								
+								this.quadMap = new Map();
+								
+								for (let i = 1; i < width; i++) {
+												for (let j = 1; j < height; j++) {
+																const quadIndex = getIndexFromCoords(i, j, this.width);
+																const br = this.balls[quadIndex];
+																const bl = this.balls[getIndexFromCoords(i - 1, j, this.width)];
+																const tl = this.balls[getIndexFromCoords(i - 1, j - 1, this.width)];
+																const tr = this.balls[getIndexFromCoords(i, j - 1, this.width)];
+																
+																this.quadMap.set(quadIndex, { tl, tr, br, bl });
+												}
+								}
 				}
 				
 				solve() {
@@ -32,17 +63,15 @@ class Fabric {
 												if (spring) {
 																const torn = spring.solve();
 																if (torn) {
+																				for (const quad of this.springQuadMap.get(spring)) {
+																							this.quadMap.delete(quad);
+																				};
+																				this.springQuadMap.delete(spring);
+																				
 																				this.springs[i] = null;
 																}
 												}
 								}
-				}
-				
-				drawSegment(i, j, prevBall) {
-								const index = getIndexFromCoords(i, j, this.width);
-								const ball = this.balls[index];
-								ctx.lineTo(ball.pos.x, ball.pos.y);
-								return ball;
 				}
 				
 				draw() {
@@ -64,26 +93,20 @@ class Fabric {
 				}
 				
 				fill() {
-								for (let i = 1; i < this.width; i++) {
-												for (let j = 1; j < this.height; j++) {
-																const ball = this.balls[getIndexFromCoords(i, j, this.width)];
-																const leftBall = this.balls[getIndexFromCoords(i - 1, j, this.width)];
-																const leftUpBall = this.balls[getIndexFromCoords(i - 1, j - 1, this.width)];
-																const upBall = this.balls[getIndexFromCoords(i, j - 1, this.width)];
+								for (const entry of this.quadMap) {
+												const quad = entry[1];
+												ctx.beginPath();
+												ctx.moveTo(quad.tl.pos.x, quad.tl.pos.y);
+												ctx.lineTo(quad.tr.pos.x, quad.tr.pos.y);
+												ctx.lineTo(quad.br.pos.x, quad.br.pos.y);
+												ctx.lineTo(quad.bl.pos.x, quad.bl.pos.y);
+												ctx.strokeStyle = this.color;
+												ctx.lineWidth = 1;
+												ctx.fillStyle = this.color;
+												ctx.closePath();
 																
-																ctx.beginPath();
-																ctx.moveTo(ball.pos.x, ball.pos.y);
-																ctx.lineTo(leftBall.pos.x, leftBall.pos.y);
-																ctx.lineTo(leftUpBall.pos.x, leftUpBall.pos.y);
-																ctx.lineTo(upBall.pos.x, upBall.pos.y);
-																ctx.strokeStyle = this.color;
-																ctx.lineWidth = 1;
-																ctx.fillStyle = this.color;
-																ctx.closePath();
-																
-																ctx.fill();
-																ctx.stroke();
-												}
+												ctx.fill();
+												ctx.stroke();
 								}
 				}
 }

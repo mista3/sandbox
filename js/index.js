@@ -20,8 +20,8 @@ const curtainAnims = [];
 balls.push(new Ball(200, 100, 8));
 
 const rope = new Fabric(10, 310, 1, 20, balls, 10, 4, true);
-const fabricRight = new Fabric(210, 100, 20, 20, balls, 10, 1, true, '#421725');
-const fabricLeft = new Fabric(10, 100, 20, 20, balls, 10, 1, true, '#421725');
+const fabricRight = new Fabric(210, 100, 20, 20, balls, 10, 1, false, '#421725');
+const fabricLeft = new Fabric(10, 100, 20, 20, balls, 10, 1, false, '#421725');
 const basket = new Fabric(100, 400, 6, 8, balls, 20, 1, true);
 
 rope.balls[0].fix();
