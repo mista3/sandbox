@@ -1,5 +1,5 @@
 class Ball {
-    constructor(x, y, radius, mass = 1, bounciness = .6, fixed = false, invisible = false) {
+    constructor(x, y, radius, mass = 1, bounciness = .6, fixed = false, invisible = false, edges = true) {
         this.pos = new Vec(x, y);
         this.lastPos = new Vec(x, y);
         this.radius = radius;
@@ -8,6 +8,7 @@ class Ball {
         this.force = new Vec();
         this.fixed = fixed;
         this.invisible = invisible;
+        this.edges = edges;
     }
     
     applyForce(vec) {
@@ -26,22 +27,24 @@ class Ball {
         let accX = this.force.x / this.mass;
         let accY = this.force.y / this.mass;
         
-        if (width > 0) {
-            if (this.pos.x - this.radius < 0) {
-                this.pos.x = this.radius;
-                velX *= this.bounciness;
-            } else if (this.pos.x + this.radius > canvas.width) {
-                this.pos.x = canvas.width - this.radius;
-                velX *= this.bounciness;
+        if (this.edges) {
+            if (width > 0) {
+                if (this.pos.x - this.radius < 0) {
+                    this.pos.x = this.radius;
+                    velX *= this.bounciness;
+                } else if (this.pos.x + this.radius > canvas.width) {
+                    this.pos.x = canvas.width - this.radius;
+                    velX *= this.bounciness;
+                }
             }
-        }
-        if (height > 0) {
-            if (this.pos.y - this.radius < 0) {
-                this.pos.y = this.radius;
-                velY *= this.bounciness;
-            } else if (this.pos.y + this.radius > canvas.height) {
-                this.pos.y = canvas.height - this.radius;
-                velY *= this.bounciness;
+            if (height > 0) {
+                if (this.pos.y - this.radius < 0) {
+                    this.pos.y = this.radius;
+                    velY *= this.bounciness;
+                } else if (this.pos.y + this.radius > canvas.height) {
+                    this.pos.y = canvas.height - this.radius;
+                    velY *= this.bounciness;
+                }
             }
         }
         

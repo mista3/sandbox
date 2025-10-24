@@ -4,7 +4,6 @@ class Spring {
 								this.b = b;
 								this.restDist = restDist;
 								this.tearDist = tearDist;
-								this.destroyed = false;
 				}
 				
 				solve() {
