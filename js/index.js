@@ -11,6 +11,22 @@ window.addEventListener('resize', () => {
 let loopTimeout;
 let lastFrameTime = Date.now();
 
+const fabricWidth = Math.ceil(width * .033);
+const fabric = new Fabric(
+    fabricWidth * 10, 
+    fabricWidth * 10, 
+    fabricWidth, 
+    fabricWidth, 
+    balls, 
+    10, 
+    1, 
+    true,
+);
+fabric.balls[0].fix();
+fabric.balls[fabricWidth - 1].fix();
+
+fabrics.push(fabric);
+
 const loop = () => {
     const now = Date.now();
     const delta = (now - lastFrameTime) * .001;
@@ -38,7 +54,7 @@ const loop = () => {
 
 loop();
 
-for (const anim of curtainAnims) anim.play();
+//for (const anim of curtainAnims) anim.play();
 
 window.addEventListener('contextmenu', (e) => e.preventDefault());
 

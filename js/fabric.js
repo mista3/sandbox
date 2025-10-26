@@ -1,5 +1,5 @@
 class Fabric {
-   constructor(x, y, width, height, globalBalls, restDist = 10, thickness = 2, outlined = true, color = 'black', tearDist = 200) {
+   constructor(x, y, width, height, globalBalls, restDist = 10, thickness = 2, outlined = true, color = 'black', tearDist = 50) {
        this.balls = [];
        this.springs = new Map();
        this.width = width;
@@ -20,7 +20,7 @@ class Fabric {
 
        for (let j = 0; j < height; j++) {
            for (let i = 0; i < width; i++) {
-               const ball = new Ball(x + restDist * i, y + restDist * j, ballRadius, 1, .6, false, false, false);
+               const ball = new Ball(x + restDist * i, y + restDist * j, ballRadius, 1, .6, false, true, false);
                this.balls.push(ball);
                globalBalls.push(ball);
                if (i > 0) {

@@ -10,7 +10,7 @@ const fabricLeft = new Fabric(
     balls, 
     curtainRest, 
     1, 
-    false, 
+    true, 
     '#421725',
 );
 const fabricRight = new Fabric(
@@ -21,7 +21,7 @@ const fabricRight = new Fabric(
     balls, 
     curtainRest, 
     1, 
-    false, 
+    true, 
     '#421725',
 );
 
