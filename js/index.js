@@ -13,7 +13,7 @@ let lastFrameTime = Date.now();
 
 const x = width * .33;
 const y = height * .33;
-const rest = 30;
+const rest = 10;
 const fabricWidth = Math.ceil(width * .33 / rest);
 const fabricHeight = Math.ceil(height * .33 / rest);
 const fabric = new Fabric(
