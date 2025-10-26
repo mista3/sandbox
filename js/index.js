@@ -26,7 +26,9 @@ const fabric = new Fabric(
     1, 
     true,
 );
-fabric.balls[0].fix();
+for (let i = 0; i < fabricWidth; i += 3) {
+    fabric.balls[i].fix();
+}
 fabric.balls[fabricWidth - 1].fix();
 
 fabrics.push(fabric);
