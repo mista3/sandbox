@@ -11,19 +11,23 @@ window.addEventListener('resize', () => {
 let loopTimeout;
 let lastFrameTime = Date.now();
 
-const fabricHeight = Math.ceil(height * .033);
+const x = width * .33;
+const y = height * .33;
+const rest = 30;
+const fabricWidth = Math.ceil(width * .33 / rest);
+const fabricHeight = Math.ceil(height * .33 / rest);
 const fabric = new Fabric(
-    fabricHeight * 10, 
-    fabricHeight * 10, 
-    fabricHeight, 
+    x,
+    y,
+    fabricWidth, 
     fabricHeight, 
     balls, 
-    10, 
+    rest, 
     1, 
     true,
 );
 fabric.balls[0].fix();
-fabric.balls[fabricHeight - 1].fix();
+fabric.balls[fabricWidth - 1].fix();
 
 fabrics.push(fabric);
 
